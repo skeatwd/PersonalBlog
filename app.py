@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
 
+from post_management import Post
 import random_code
 
 app = Flask(__name__)
 
 SECRET_CODE = 0
-
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
@@ -39,7 +40,14 @@ def create_post():
 		return render_template('/admin/createPost.html')
 	elif request.method == "POST":
 		text = request.form.get('text_post')
-		return f'<p>{text}</p>'
+		title = request.form.get('title_post')
+		datetime_now = datetime.now()
+		date_now = datetime_now.date()
+		time_now = datetime_now.time()
+		post_dict = {'title': title, 'content': text, 'creation_date': date_now, 'creation_time': time_now}
+		create = Post()
+		create.add_post(post_dict)
+		return '<h1>Greate!</h1>'
 
 @app.route('/error')
 def error():
@@ -47,4 +55,5 @@ def error():
 
 
 if __name__ == '__main__':
+	Post.create_table()
 	app.run(debug=True)
